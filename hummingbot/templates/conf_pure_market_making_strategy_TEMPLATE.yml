@@ -107,16 +107,16 @@ bid_order_optimization_depth: null
 add_transaction_costs: null
 
 # The price source (current_market/external_market/custom_api).
-price_source: null
+price_source: external_market
 
 # The price type (mid_price/last_price/last_own_trade_price/best_bid/best_ask/inventory_cost).
-price_type: null
+price_type: mid_price
 
 # An external exchange name (for external exchange pricing source).
-price_source_exchange: null
+price_source_exchange: binance
 
 # A trading pair for the external exchange, e.g. BTC-USDT (for external exchange pricing source).
-price_source_market: null
+price_source_market: SOL-USDC
 
 # An external api that returns price (for custom_api pricing source).
 price_source_custom_api: null
@@ -125,7 +125,7 @@ price_source_custom_api: null
 custom_api_update_interval: null
 
 #Take order if they cross order book when external price source is enabled
-take_if_crossed: null
+take_if_crossed: True
 
 # Use user provided orders to directly override the orders placed by order_amount and order_level_parameter
 # This is an advanced feature and user is expected to directly edit this field in config file

@@ -234,7 +234,7 @@ pure_market_making_config_map = {
                   prompt="How many orders do you want to place on both sides? >>> ",
                   type_str="int",
                   validator=lambda v: validate_int(v, min_value=-1, inclusive=False),
-                  default=1),
+                  default=5),
     "order_level_amount":
         ConfigVar(key="order_level_amount",
                   prompt="How much do you want to increase or decrease the order size for each "
@@ -242,7 +242,7 @@ pure_market_making_config_map = {
                   required_if=lambda: pure_market_making_config_map.get("order_levels").value > 1,
                   type_str="decimal",
                   validator=lambda v: validate_decimal(v),
-                  default=0),
+                  default=Decimal("0.1")),
     "order_level_spread":
         ConfigVar(key="order_level_spread",
                   prompt="Enter the price increments (as percentage) for subsequent "
@@ -335,7 +335,7 @@ pure_market_making_config_map = {
         ConfigVar(key="price_source",
                   prompt="Which price source to use? (current_market/external_market/custom_api) >>> ",
                   type_str="str",
-                  default="current_market",
+                  default="external_market",
                   validator=validate_price_source,
                   on_validated=on_validate_price_source),
     "price_type":
@@ -352,12 +352,14 @@ pure_market_making_config_map = {
                   prompt="Enter external price source exchange name >>> ",
                   required_if=lambda: pure_market_making_config_map.get("price_source").value == "external_market",
                   type_str="str",
+                  default="binance",
                   validator=validate_price_source_exchange,
                   on_validated=on_validated_price_source_exchange),
     "price_source_market":
         ConfigVar(key="price_source_market",
                   prompt=price_source_market_prompt,
                   required_if=lambda: pure_market_making_config_map.get("price_source").value == "external_market",
+                  default="SOL-USDC",
                   type_str="str",
                   validator=validate_price_source_market),
     "take_if_crossed":
@@ -365,6 +367,7 @@ pure_market_making_config_map = {
                   prompt="Do you want to take the best order if orders cross the orderbook? ((Yes/No) >>> ",
                   required_if=lambda: pure_market_making_config_map.get(
                       "price_source").value == "external_market",
+                  default="Yes",
                   type_str="bool",
                   validator=validate_bool),
     "price_source_custom_api":
