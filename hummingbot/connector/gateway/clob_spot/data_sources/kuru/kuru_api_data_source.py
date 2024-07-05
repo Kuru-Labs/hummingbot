@@ -31,7 +31,7 @@ from hummingbot.connector.gateway.common_types import CancelOrderResult, PlaceOr
 from hummingbot.connector.gateway.gateway_in_flight_order import GatewayInFlightOrder
 from hummingbot.connector.trading_rule import TradingRule
 from hummingbot.core.data_type import in_flight_order
-from hummingbot.core.data_type.common import OrderType
+from hummingbot.core.data_type.common import OrderType, TradeType
 from hummingbot.core.data_type.in_flight_order import OrderState, OrderUpdate, TradeUpdate
 from hummingbot.core.data_type.order_book_message import OrderBookMessage, OrderBookMessageType
 from hummingbot.core.data_type.trade_fee import MakerTakerExchangeFeeRates, TokenAmount, TradeFeeBase, TradeFeeSchema
@@ -674,6 +674,11 @@ class KuruAPIDataSource(GatewayCLOBAPIDataSourceBase):
 
                         market = self._markets_info[in_flight_order.trading_pair]
 
+                        fee_amount = in_flight_order.amount * in_flight_order.price * Decimal(market.takerFeeBps) / 10000
+                        fee_token = market.quoteToken
+                        if in_flight_order.trade_type == TradeType.BUY:
+                            fee_amount = in_flight_order.amount * Decimal(market.takerFeeBps) / 10000
+                            fee_token = market.baseToken
                         trade_update = TradeUpdate(
                             trade_id=trade_id,
                             client_order_id=in_flight_order.client_order_id,
@@ -687,8 +692,8 @@ class KuruAPIDataSource(GatewayCLOBAPIDataSourceBase):
                                 fee_schema=TradeFeeSchema(),
                                 trade_type=in_flight_order.trade_type,
                                 flat_fees=[TokenAmount(
-                                    amount=Decimal(market.fees.taker),
-                                    token=market.quoteToken.symbol
+                                    amount=fee_amount,
+                                    token=fee_token
                                 )]
                             ),
                         )
